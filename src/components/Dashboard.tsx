@@ -9,58 +9,6 @@ import {
   History,
   FileText,
 } from 'lucide-react';
-import { Vulnerability, ScanHistory, ComplianceStatus } from '../types';
-
-const mockVulnerabilities: Vulnerability[] = [
-  {
-    id: '1',
-    type: 'SQL Injection',
-    severity: 'Critical',
-    description: 'Unvalidated user input could lead to SQL injection attacks.',
-    recommendation: 'Implement prepared statements and input validation.',
-    endpoint: '/api/users',
-    timestamp: '2024-03-15T10:30:00Z',
-  },
-  {
-    id: '2',
-    type: 'Authentication Bypass',
-    severity: 'High',
-    description: 'Weak authentication mechanism detected.',
-    recommendation: 'Implement strong authentication and session management.',
-    endpoint: '/api/auth',
-    timestamp: '2024-03-15T10:35:00Z',
-  },
-];
-
-const mockComplianceStatus: ComplianceStatus[] = [
-  {
-    standard: 'OWASP Top 10',
-    score: 85,
-    requirements: { met: 8, total: 10 },
-  },
-  {
-    standard: 'GDPR',
-    score: 90,
-    requirements: { met: 9, total: 10 },
-  },
-];
-
-const mockScanHistory: ScanHistory[] = [
-  {
-    id: '1',
-    date: '2024-03-15',
-    vulnerabilitiesFound: 3,
-    complianceScore: 85,
-    status: 'Completed',
-  },
-  {
-    id: '2',
-    date: '2024-03-14',
-    vulnerabilitiesFound: 5,
-    complianceScore: 75,
-    status: 'Completed',
-  },
-];
 
 function Dashboard() {
   const [endpoint, setEndpoint] = useState('');
@@ -73,20 +21,30 @@ function Dashboard() {
     setTimeout(() => setScanning(false), 2000);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser'); // Clear login session
+    window.location.reload(); // Refresh page to show login
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Shield className="h-8 w-8 text-indigo-600" />
-              <span className="ml-2 text-xl font-semibold text-gray-900">
-                API Security Auditor
-              </span>
-            </div>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <Shield className="h-8 w-8 text-indigo-600" />
+          <span className="ml-2 text-xl font-semibold text-gray-900">
+            API Security Auditor
+          </span>
         </div>
-      </nav>
+        <div>
+        <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Scan Input Section */}
@@ -129,7 +87,6 @@ function Dashboard() {
                   Total Vulnerabilities
                 </h3>
                 <p className="text-3xl font-bold text-gray-900">
-                  {mockVulnerabilities.length}
                 </p>
               </div>
             </div>
@@ -141,7 +98,7 @@ function Dashboard() {
                 <h3 className="text-lg font-medium text-gray-900">
                   Compliance Score
                 </h3>
-                <p className="text-3xl font-bold text-gray-900">85%</p>
+                <p className="text-3xl font-bold text-gray-900">NULL</p>
               </div>
             </div>
           </div>
@@ -152,7 +109,7 @@ function Dashboard() {
                 <h3 className="text-lg font-medium text-gray-900">
                   Security Rating
                 </h3>
-                <p className="text-3xl font-bold text-gray-900">B+</p>
+                <p className="text-3xl font-bold text-gray-900">NULL</p>
               </div>
             </div>
           </div>
@@ -169,36 +126,6 @@ function Dashboard() {
                 </h2>
               </div>
               <div className="divide-y divide-gray-200">
-                {mockVulnerabilities.map((vuln) => (
-                  <div key={vuln.id} className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {vuln.type}
-                      </h3>
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          vuln.severity === 'Critical'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {vuln.severity}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-2">{vuln.description}</p>
-                    <p className="text-sm text-gray-500">
-                      Endpoint: {vuln.endpoint}
-                    </p>
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
-                        Recommendation:
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {vuln.recommendation}
-                      </p>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
@@ -214,24 +141,6 @@ function Dashboard() {
                 </h2>
               </div>
               <div className="p-6 space-y-4">
-                {mockComplianceStatus.map((status) => (
-                  <div key={status.standard}>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-gray-900">
-                        {status.standard}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {status.score}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-green-600 h-2 rounded-full"
-                        style={{ width: `${status.score}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
 
@@ -244,28 +153,21 @@ function Dashboard() {
                 </h2>
               </div>
               <div className="divide-y divide-gray-200">
-                {mockScanHistory.map((scan) => (
-                  <div key={scan.id} className="p-6">
+                  <div className="p-6">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-900">
-                        {scan.date}
+                        
                       </span>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          scan.status === 'Completed'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
+    
                       >
-                        {scan.status}
                       </span>
                     </div>
                     <div className="text-sm text-gray-500">
-                      <p>Vulnerabilities: {scan.vulnerabilitiesFound}</p>
-                      <p>Compliance Score: {scan.complianceScore}%</p>
+                      <p>Vulnerabilities: </p>
+                      <p>Compliance Score: %</p>
                     </div>
                   </div>
-                ))}
               </div>
             </div>
           </div>
